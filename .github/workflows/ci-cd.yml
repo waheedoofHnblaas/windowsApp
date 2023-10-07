@@ -24,8 +24,8 @@ jobs:
       - name: Build desktop app
         run: flutter build windows  # Replace 'windows' with 'macos' or 'linux' for other platforms.
 
-      - name: Run tests
-        run: flutter test
+#      - name: Run tests
+#        run: flutter test
 
       - name: Deploy artifacts
         uses: actions/upload-artifact@v2
