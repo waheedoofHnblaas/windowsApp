@@ -8,15 +8,6 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
-    # Rest of the job configuration for Windows environment
-
-  build-macos:
-    runs-on: macos-latest
-    # Rest of the job configuration for macOS environment
-
-  build-linux:
-    runs-on: ubuntu-latest
-    # Rest of the job configuration for Linux environment
 
     steps:
       - name: Checkout code
