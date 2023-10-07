@@ -125,13 +125,7 @@ class UiController extends GetxController {
     FocusScope.of(context).requestFocus(focusNode);
 
     update();
-    // await scrollController.animateTo(
-    //   scrollController.position.maxScrollExtent.isNaN
-    //       ? 0
-    //       : scrollController.position.minScrollExtent,
-    //   duration: const Duration(milliseconds: 600),
-    //   curve: Curves.easeOut,
-    // );
+
     print(listChats);
   }
 
