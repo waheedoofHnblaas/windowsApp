@@ -178,7 +178,6 @@ class MyHomePage extends StatelessWidget {
                                     padding: const EdgeInsets.all(8.0),
                                     child: TextFormField(
                                       focusNode: uiController.focusNode,
-                                      canRequestFocus: true,
                                       controller:
                                           uiController.textMessageController,
                                       onFieldSubmitted: (value) {
