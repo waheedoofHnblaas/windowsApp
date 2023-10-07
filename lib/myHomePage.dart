@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:new_windows_app/constants.dart';
 import 'package:new_windows_app/controller_ui.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:flutter/gestures.dart';
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
+}
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -11,6 +20,69 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UiController uiController = Get.put(UiController());
+    www(int index) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: Color(0xff002a2f),
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        width: AppDims.width / 3,
+        child: Column(
+          children: [
+            Title(
+              color: Colors.white,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.minimize,
+                    color: Colors.white,
+                  ),
+                  Icon(
+                    Icons.window,
+                    color: Colors.white,
+                  ),
+                  Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              index.toString(),
+              style: const TextStyle(color: Colors.red),
+            ),
+            Expanded(
+              child: ListView.builder(
+                reverse: true,
+                scrollDirection: Axis.vertical,
+                // controller:
+                //     uiController.scrollController.isNull
+                //         ? ScrollController()
+                //         : uiController.scrollController,
+                itemCount: uiController.listChats.length,
+                itemBuilder: (context, index) => Text(
+                  uiController
+                      .listChats[uiController.listChats.length - index - 1],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 21,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+
+    windowManager.setPreventClose(true);
     return Scaffold(
       body: GetBuilder<UiController>(
         builder: (controller) {
@@ -22,76 +94,32 @@ class MyHomePage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Container(
-                        decoration: const BoxDecoration(
-                          color: Color(0xff002a2f),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
-                        ),
+                        color: Colors.transparent,
                         height: uiController.showChat ? AppDims.chatHeight : 0,
                         child: uiController.showChat
                             ? uiController.listChats.isNotEmpty
                                 ? Row(
                                     children: [
                                       Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0,
-                                          ),
-                                          child: ListView.builder(
-                                            reverse: true,
-                                            physics:
-                                                const ClampingScrollPhysics(),
-                                            // controller:
-                                            //     uiController.scrollController.isNull
-                                            //         ? ScrollController()
-                                            //         : uiController.scrollController,
-                                            itemCount:
-                                                uiController.listChats.length,
-                                            itemBuilder: (context, index) =>
-                                                Text(
-                                              uiController.listChats[
-                                                  uiController
-                                                          .listChats.length -
-                                                      index -
-                                                      1],
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 21,
-                                              ),
-                                            ),
-                                          ),
+                                        child: ListView.builder(
+                                          controller:
+                                              uiController.listController,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (context, index) =>
+                                              www(index),
+                                          itemCount: 10,
                                         ),
                                       ),
-                                      RawKeyboardListener(
-                                        focusNode: FocusNode(),
-                                        autofocus: true,
-                                        onKey: (event) {
-                                          if (event.isKeyPressed(
-                                              LogicalKeyboardKey.controlLeft)) {
-                                            // Do action for control key
-                                          } else if (event.isKeyPressed(
-                                              LogicalKeyboardKey.arrowRight)) {
-                                            uiController.showSecondChat();
-
-                                            // Do action for up arrow
-                                          } else if (event.isKeyPressed(
-                                              LogicalKeyboardKey.arrowLeft)) {
-                                            uiController.showSecondChat();
-
-                                            // Do action for up arrow
-                                          }
+                                      IconButton(
+                                        onPressed: () {
+                                          // uiController.scroll();
+                                          uiController.showSecondChat();
                                         },
-                                        child: IconButton(
-                                          onPressed: () {
-                                            uiController.showSecondChat();
-                                          },
-                                          icon: Icon(
-                                            uiController.secondChat
-                                                ? Icons.arrow_back_ios_rounded
-                                                : Icons.arrow_forward_ios,
-                                            color: Colors.white,
-                                          ),
+                                        icon: Icon(
+                                          uiController.secondChat
+                                              ? Icons.arrow_back_ios_rounded
+                                              : Icons.arrow_forward_ios,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ],
@@ -145,7 +173,7 @@ class MyHomePage extends StatelessWidget {
                           ? Row(
                               children: [
                                 Expanded(
-                                  flex: 15,
+                                  flex: 3,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: TextFormField(
@@ -171,39 +199,40 @@ class MyHomePage extends StatelessWidget {
                                   ),
                                 ),
                                 Expanded(
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      // await windowManager.setSkipTaskbar(true);
-                                      // await windowManager.setPreventClose(true);
-                                      // final tray = SystemTray();
-                                      // await tray.initSystemTray(
-                                      //   iconPath: 'assets/robot.png',
-                                      // );
-                                    },
-                                    icon: const Icon(
-                                      Icons.copy,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: IconButton(
-                                    onPressed: () {
-                                      uiController.send(context);
-                                    },
-                                    icon: const Icon(
-                                      Icons.send,
-                                      color: Colors.white,
-                                    ),
+                                  flex: 1,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () async {
+                                          // await windowManager.setSkipTaskbar(true);
+                                          // await windowManager.setPreventClose(true);
+                                          // final tray = SystemTray();
+                                          // await tray.initSystemTray(
+                                          //   iconPath: 'assets/robot.png',
+                                          // );
+                                        },
+                                        icon: const Icon(
+                                          Icons.copy,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          uiController.send(context);
+                                        },
+                                        icon: const Icon(
+                                          Icons.send,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -243,18 +272,18 @@ class MyHomePage extends StatelessWidget {
                                   Image.asset('assets/robot.png'),
                                   uiController.isShowExit
                                       ? Positioned(
-                                          bottom: 0,
-                                          left: 30,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.red,
-                                            child: IconButton(
-                                              onPressed: () {
-                                                windowManager.minimize();
-                                              },
-                                              icon: const Icon(Icons.close),
-                                            ),
-                                          ),
-                                        )
+                                    bottom: 0,
+                                    left: 30,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.red,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          windowManager.minimize();
+                                        },
+                                        icon: const Icon(Icons.close),
+                                      ),
+                                    ),
+                                  )
                                       : Container()
                                 ],
                               ),

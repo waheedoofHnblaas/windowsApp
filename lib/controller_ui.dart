@@ -13,6 +13,11 @@ class UiController extends GetxController {
   TextEditingController textMessageController = TextEditingController();
 
   List<String> listChats = [];
+  ScrollController listController = ScrollController();
+
+  scroll(){
+    listController.jumpTo(AppDims.width / 3);
+  }
 
   @override
   void onInit() {
@@ -24,10 +29,30 @@ class UiController extends GetxController {
     if (textFieldIsShow) {
       await windowManager.setSize(Size(AppDims.width, AppDims.height));
     } else {
+      bool ss = false;
+      if (showChat) {
+        ss = true;
+      }
       showChat = false;
-
-      await windowManager.setSize(Size(AppDims.smallWidth, AppDims.height));
+      update();
+      if (ss) {
+        print('=========sssssss==========');
+        await windowManager.getPosition().then((value) async {
+          await windowManager.setPosition(
+            Offset(
+              value.dx,
+              value.dy + AppDims.chatHeight - AppDims.smallHeight,
+            ),
+          );
+          return value.dx;
+        });
+      }
+      await windowManager.setSize(
+        Size(AppDims.smallWidth, AppDims.height),
+        animate: true,
+      );
     }
+
     // windowManager.setAlignment(Alignment.bottomRight, animate: true);
     print(await windowManager.getPosition());
     // await windowManager.setPosition(await windowManager.getPosition());
@@ -48,7 +73,7 @@ class UiController extends GetxController {
         return value.dx;
       });
     }
-    if (showChat&&textFieldIsShow) {
+    if (showChat && textFieldIsShow) {
       print('textFieldIsShow-=====showChat==========');
       await windowManager.getPosition().then(
         (value) async {
@@ -59,7 +84,7 @@ class UiController extends GetxController {
           return "${value.dx}=========";
         },
       );
-    }else{
+    } else {
       print('object-===============');
     }
 
@@ -72,21 +97,22 @@ class UiController extends GetxController {
       print('objec1t1');
       // windowManager.center();
       await windowManager.getPosition().then(
-            (value) async {
+        (value) async {
           await windowManager.setPosition(
-            Offset(value.dx,
-                value.dy - AppDims.chatHeight+AppDims.smallHeight),
+            Offset(
+              value.dx,
+              value.dy - AppDims.chatHeight + AppDims.smallHeight,
+            ),
           );
           return "${value.dx}=========";
         },
       );
-    }else{
+    } else {
       print('objec2t2');
       await windowManager.getPosition().then(
-            (value) async {
+        (value) async {
           await windowManager.setPosition(
-            Offset(value.dx,
-                value.dy + AppDims.height-AppDims.smallHeight),
+            Offset(value.dx, value.dy + AppDims.height - AppDims.smallHeight),
           );
           return "${value.dx}=========";
         },

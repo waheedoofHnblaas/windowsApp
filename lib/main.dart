@@ -7,20 +7,16 @@ import 'package:window_manager/window_manager.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-  windowManager.setAlwaysOnTop(true);
-  windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-  windowManager.setResizable(false);
-  windowManager.setAsFrameless();
-  windowManager.setSize(Size(AppDims.smallWidth, AppDims.smallHeight));
-  windowManager.setBackgroundColor(Colors.transparent);
-  windowManager.center();
-  // await windowManager.setBounds(
-  //   Rect.fromCenter(
-  //       center: Offset(1000, 200),
-  //       width: AppDims.width,
-  //       height: AppDims.height),
-  // );
-  // windowManager.setAlignment(Alignment.bottomRight);
+  await windowManager.setAlwaysOnTop(true);
+  await windowManager.setTitleBarStyle(
+    TitleBarStyle.hidden,
+    windowButtonVisibility: true,
+  );
+  await windowManager.setResizable(false);
+  await windowManager.setAsFrameless();
+  await windowManager.setSize(Size(AppDims.smallWidth, AppDims.smallHeight) );
+  await windowManager.setBackgroundColor(Colors.transparent);
+  await windowManager.center();
   runApp(const MyApp());
 }
 
@@ -30,6 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      scrollBehavior: MyCustomScrollBehavior(),
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
