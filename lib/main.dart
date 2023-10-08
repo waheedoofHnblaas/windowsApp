@@ -15,7 +15,7 @@ Future<void> main() async {
   await windowManager.setResizable(false);
   await windowManager.setAsFrameless();
   await windowManager.setSize(Size(AppDims.smallWidth, AppDims.smallHeight) );
-  await windowManager.setBackgroundColor(Colors.transparent);
+  await windowManager.setBackgroundColor(Colors.red);
   await windowManager.center();
   runApp(const MyApp());
 }
